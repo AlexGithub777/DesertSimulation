@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using Image = System.Drawing.Image;
 
-namespace GraphicalUIDemo
+namespace ItemFactory
 {
     public partial class Form1 : Form
     {
@@ -19,9 +19,7 @@ namespace GraphicalUIDemo
         Framework framework = new Framework();
 
         //Locations of object generators
-        public Vector2 ballGenerator = new Vector2(0, 50);
-        public Vector2 spriteGenerator = new Vector2(0, 150);
-        public Vector2 starGenerator = new Vector2(100, 0);
+        public Vector2 ballGenerator = new Vector2(120, 0);         
         public Vector2 rectangleGenerator = new Vector2(200, 0);
 
         public Form1()
@@ -45,89 +43,44 @@ namespace GraphicalUIDemo
 
             //Draw the runningBelt2 object on canvas
             framework.runningBelt2.draw(e.Graphics);
-
-            // Draw the windmill object
-            //framework.windmill.draw(e.Graphics);
             
-
-            //Draw blocks
-            
-
-            e.Graphics.FillRectangle(new SolidBrush(Color.Blue), ballGenerator.X, ballGenerator.Y, 10, 60);
-            e.Graphics.FillRectangle(new SolidBrush(Color.Black), spriteGenerator.X, spriteGenerator.Y, 10, 60);
-            e.Graphics.FillRectangle(new SolidBrush(Color.Red), starGenerator.X, starGenerator.Y, 60, 10);
+            //Draw blocks           
+            e.Graphics.FillRectangle(new SolidBrush(Color.Blue), ballGenerator.X, ballGenerator.Y, 60, 10);
             e.Graphics.FillRectangle(new SolidBrush(Color.Black), rectangleGenerator.X, rectangleGenerator.Y, 60, 10);
 
-
-            // Draw new ball here if not 
-            foreach (Ball ball in framework.listOfBall)
+           
+            foreach (Shape item in framework.itemList)
             {
-                ball.move();
-                ball.draw(e.Graphics);
-            }
-
-            foreach (Sprite sprite in framework.listOfSprite)
-            {
-                sprite.move();
-                sprite.draw(e.Graphics);
-            }
-
-            foreach (Rectangle rectangle in framework.listOfRectangle)
-            {
-                rectangle.move();
+                item.move();
 
                 // Draw an aqua square around the rectangle if it's frozen
-                if (rectangle.IsFrozen)
+                if (item.IsFrozen)
                 {
-                    rectangle.drawFreeze(e.Graphics, rectangle);
+                    item.drawFreeze(e.Graphics, item);
                 }
 
-                rectangle.draw(e.Graphics);
+                item.draw(e.Graphics);
             }
-
-            foreach (Triangle triangle in framework.listOfTriangle)
-            {
-                triangle.move();
-                triangle.draw(e.Graphics);
-            }
-
-            foreach (Star star in framework.listOfStar)
-            {
-                star.move();
-                star.draw(e.Graphics);
-            }
-
+                 
+            // Draw the freezer
             framework.freezer.draw(e.Graphics);
             // Draw the crusher
             framework.crusher.draw(e.Graphics);
-
-            //framework.horizontalCrusher.draw(e.Graphics);
-
-
         }
 
         private void addBallBtn_Click(object sender, EventArgs e)
         {
             // Create a new ball and add it to the canvas
             Random rand = new Random();
-            int width = rand.Next(50) + 10; // between 10 - 60
+            int width = rand.Next(25) + 10; // between 10 - 35
             Color color = Color.FromArgb(rand.Next(256), rand.Next(256), rand.Next(256));
             Ball newBall = new Ball(new System.Numerics.Vector2(ballGenerator.X, ballGenerator.Y), width, width, new SolidBrush(color));
 
+            //Make this ball move downward
+            newBall.velocity.X = 0;
+            newBall.velocity.Y = 5;
+
             framework.addItem(newBall);
-        }
-
-        private void addSpriteBtn_Click(object sender, EventArgs e)
-        {
-            Image[] frames = new Image[] {Properties.Resources.flyingdragon_frame1,
-                                          Properties.Resources.flyingdragon_frame2,
-                                          Properties.Resources.flyingdragon_frame3,
-                Properties.Resources.flyingdragon_frame4};
-            Sprite newSprite = new Sprite(80, 60, frames,
-                                      new Vector2(spriteGenerator.X, spriteGenerator.Y), new SolidBrush(Color.AliceBlue));
-
-            //add this new object to the list
-            framework.listOfSprite.Add(newSprite);
         }
 
         private void addRectangleBtn_Click(object sender, EventArgs e)
@@ -145,21 +98,6 @@ namespace GraphicalUIDemo
 
             framework.addItem(newRectangle);
         }
-
-        private void addTriangleBtn_Click(object sender, EventArgs e)
-        {
-            //Create a randomly-sized anbd colored triangle 
-            Random rand = new Random();
-            int width = rand.Next(50) + 10; // between 10 - 60
-            Color color = Color.FromArgb(rand.Next(256), rand.Next(256), rand.Next(256));
-
-            Triangle newTriangle = new Triangle(width, new SolidBrush(color), new Vector2(starGenerator.X, starGenerator.Y));
-
-            //add this new triangle to the listOfTriangles
-            framework.listOfTriangle.Add(newTriangle);
-
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             // Load event - when the GUI is loaded
@@ -169,34 +107,11 @@ namespace GraphicalUIDemo
             timer.Tick += timer_Tick;
             timer.Enabled = true;
 
-        }
-            /*Timer crusherTimer = new Timer();
-            crusherTimer.Interval = 2000; // 2000ms
-            crusherTimer.Tick += crusherTimer_Tick;
-            crusherTimer.Enabled = true;
-        }
-
-        private void crusherTimer_Tick(object sender, EventArgs e)
-        {
-            // Toggle the crusher state
-            framework.crusher.ToggleCrusher();
-        }
-        */
-
+        }          
         private void timer_Tick(object sender, EventArgs e)
         {
             // Update canvas
             canvas.Invalidate();
-        }
-
-        private void addStar_Click(object sender, EventArgs e)
-        {
-            // Create a new star and add it to the canvas
-        Random rand = new Random();
-        int width = rand.Next(50) + 10; // between 10 - 60
-        Star newStar = new Star(width, width, starGenerator, new SolidBrush(Color.AliceBlue));
-        framework.addItem(newStar);
-        }
+        }        
     }
-
 }

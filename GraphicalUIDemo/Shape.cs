@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Numerics;
 
-namespace GraphicalUIDemo
+namespace ItemFactory
 {
     internal class Shape
     {
@@ -88,8 +88,6 @@ namespace GraphicalUIDemo
                 velocity.X = -velocity.X;
                 location.X = boundaryW - width;
             }
-
-
 
             //Move the shape 
             location += velocity;

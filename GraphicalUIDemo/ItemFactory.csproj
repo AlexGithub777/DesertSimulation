@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3D32DE8A-FD67-437E-943E-FF477740D984}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>GraphicalUIDemo</RootNamespace>
-    <AssemblyName>GraphicalUIDemo</AssemblyName>
+    <RootNamespace>ItemFactory</RootNamespace>
+    <AssemblyName>ItemFactory</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,8 +62,6 @@
     <Compile Include="Shape.cs" />
     <Compile Include="Framework.cs" />
     <Compile Include="Sprite.cs" />
-    <Compile Include="Star.cs" />
-    <Compile Include="Triangle.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

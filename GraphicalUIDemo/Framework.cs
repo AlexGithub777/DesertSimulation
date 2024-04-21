@@ -10,24 +10,18 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using Image = System.Drawing.Image;
 
-namespace GraphicalUIDemo
+namespace ItemFactory
 {
     internal class Framework
     {
         //Properties
-        public List<Ball> listOfBall = new List<Ball>();
+        public List<Shape> itemList = new List<Shape>();
         public List<Rectangle> listOfRectangle = new List<Rectangle>();
-        public List<Triangle> listOfTriangle = new List<Triangle>();//
-        public List<Sprite> listOfSprite = new List<Sprite>();//
-        public List<Star> listOfStar = new List<Star>();
-
-        
-
+        public List<Ball> listOfBall = new List<Ball>();
         public Freezer freezer;
         public Sprite runningBelt1;
         public Sprite runningBelt2; // New running belt
         public Crusher crusher;
-        public Rectangle crushZone;
         // Get the horizontal part of the crusher
         
         //public Sprite windmill;
@@ -70,64 +64,25 @@ namespace GraphicalUIDemo
             // Create the crusher object
             crusher = new Crusher(new Vector2(200, 100), 60, 100, new SolidBrush(Color.Gray));
 
-            // Get the horizontal part of the crusher
-            crushZone = crusher.crushZone;
   
         }
 
         // Methods: Static Polymorphysm technique
         public void addItem(Ball newBall)
         {
-            //Add item to the list
             listOfBall.Add(newBall);
+            //Add item to the list
+            itemList.Add(newBall);
         }
             
-        public void addItem(Sprite newSprite)
-        {
-            listOfSprite.Add(newSprite);
-        }
-
         public void addItem(Rectangle newRectangle)
         {
             listOfRectangle.Add(newRectangle);
+
+            itemList.Add(newRectangle);
         }
-
-        public void addItem(Triangle newTriangle)
-        { 
-            listOfTriangle.Add(newTriangle);
-        }
-
-        public void addItem(Star newStar) 
-        { 
-            listOfStar.Add(newStar); 
-        }
-
-        // Calculate the distance between the obj1's center and obj2's center
-        public bool checkCollision(Ball obj1, Sprite obj2)
-        {
-            //Calculate the center coordinate of 2 object boxes
-            int obj1CenterX = (int)obj1.location.X + (obj1.width / 2);
-            int obj1CenterY = (int)obj1.location.Y + (obj1.height / 2);
-
-            int obj2CenterX = (int)obj2.location.X + (obj2.width / 2);
-            int obj2CenterY = (int)obj2.location.Y + (obj2.height / 2);
-
-            //Calculate the distance between the central points of two object boxes
-            int centralDistanceX = Math.Abs(obj1CenterX - obj2CenterX);
-            int centralDistanceY = Math.Abs(obj1CenterY - obj2CenterY);
-
-            //Check two collision conditions:
-            if (centralDistanceX <= obj1.width/2 + obj2.width/2 && centralDistanceY <= (obj1.height/2 + obj2.height/2))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool checkCollision(Rectangle obj1, Sprite obj2)
+       
+        public bool checkCollision(Shape obj1, Sprite obj2)
         {
             
             //Calculate the center coordinate of 2 object boxes
@@ -232,72 +187,67 @@ namespace GraphicalUIDemo
                 {
                     if (checkCollision(listOfBall[i], listOfBall[j]))
                     {
-                        // Change the velocity of 2 balls to 0
-                        listOfBall[i].velocity = new System.Numerics.Vector2(0, 0);
-                        listOfBall[j].velocity = new System.Numerics.Vector2(0, 0);
-                        // Change color of 2 balls to black
-                        listOfBall[i].color = new SolidBrush(Color.Black);
-                        listOfBall[j].color = new SolidBrush(Color.Black);
+                        // add logic
                     }
 
                 }
             }
         }
 
-        // Iterates through each rectangle in the list and checks for collisions with various objects.
-        // If a collision is detected, it updates the rectangle's velocity or state accordingly.
-        // If a rectangle reaches the bottom line, it is removed from the list.
+        // Iterates through each item in the list and checks for collisions with various objects.
+        // If a collision is detected, it updates the item's velocity or state accordingly.
+        // If a item reaches the bottom line, it is removed from the list.
         public void checkAllCollision()
         {
-            for (int i = listOfRectangle.Count - 1; i >= 0; i--)
+            for (int i = itemList.Count - 1; i >= 0; i--)
             {
-                Rectangle rectangle = listOfRectangle[i];
+                Shape item = itemList[i];
 
                 // Check collision with running belt1
-                if (checkCollision(rectangle, runningBelt1))
+                if (checkCollision(item, runningBelt1))
                 {
                     // Change the velocity of the rectangle to make it move to the right
-                    rectangle.velocity.Y = 0;
-                    rectangle.velocity.X = 4;
+                    item.velocity.Y = 0;
+                    item.velocity.X = 4;
                 }
 
                 // Check collision with freezer
-                else if (checkFreezerCollision(rectangle, freezer))
+                else if (checkFreezerCollision(item, freezer))
                 {
                     // Mark the rectangle as frozen
-                    freezer.Freeze(rectangle);
+                    freezer.Freeze(item);
                 }
 
                 // Check collision with running belt2
-                else if (checkCollision(rectangle, runningBelt2))
+                else if (checkCollision(item, runningBelt2))
                 {
                     // Change the velocity of the rectangle to make it move to the left
-                    rectangle.velocity.Y = 0;
-                    rectangle.velocity.X = -4;
+                    item.velocity.Y = 0;
+                    item.velocity.X = -4;
 
                     // If the crusher is closed, check for collision with the crush zone and unfreeze the rectangle
                     if (!crusher.isOpen)
                     {
-                        if (checkCrusherCollision(rectangle, crushZone))
+                        if (checkCrusherCollision(item, crusher.crushZone))
                         {
-                            rectangle.IsFrozen = false;
+                            item.IsFrozen = false;
                         }
                     }
                 }
 
                 else
                 {
-                    // Check if the rectangle touches the bottom line or not? If not, move downward. If yes, remove it
-                    if (rectangle.location.Y + rectangle.height > Shape.boundaryH)
+                    // Check if the item touches the bottom line or not? If not, move downward. If yes, remove it
+                    if (item.location.Y + item.height > Shape.boundaryH)
                     {
-                        // Remove rectangle
-                        listOfRectangle.Remove(rectangle);
+                        // Remove item
+                        itemList.Remove(item);
                     }
                     else
                     {
-                        // Change the velocity of rectangle to make it move downward
-                        rectangle.velocity.X = 0;
-                        rectangle.velocity.Y = 5;
+                        // Change the velocity of item to make it move downward
+                        item.velocity.X = 0;
+                        item.velocity.Y = 5;
                     }
                 }
             }
