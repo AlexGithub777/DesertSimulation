@@ -23,7 +23,7 @@ namespace GraphicalUIDemo
 
         
 
-        public Rectangle freezer;
+        public Freezer freezer;
         public Sprite runningBelt1;
         public Sprite runningBelt2; // New running belt
         public Crusher crusher;
@@ -60,8 +60,9 @@ namespace GraphicalUIDemo
             runningBelt2 = new Sprite(250, 20, secondBeltFrames, new Vector2(185, 270), new SolidBrush(Color.Beige)); // Adjust position as needed
 
             //init freezer
+            freezer = new Freezer();
 
-            freezer = new Rectangle(new Vector2(373, 100), 40, 40, new SolidBrush(Color.Aqua));
+
             // Init windmill object
             //Image[] windmillFrames = new Image[] { Properties.Resources.windmill1, Properties.Resources.windmill2, Properties.Resources.windmill3, Properties.Resources.windmill4 };
 
@@ -71,8 +72,7 @@ namespace GraphicalUIDemo
 
             // Get the horizontal part of the crusher
             crushZone = crusher.crushZone;
-
-            
+  
         }
 
         // Methods: Static Polymorphysm technique
@@ -177,18 +177,18 @@ namespace GraphicalUIDemo
             }
         }
 
-        public bool checkFreezerCollision(Rectangle obj1, Rectangle obj2)
+        public bool checkFreezerCollision(Shape shape1, Shape shape2)
         {
             // Calculate the overlapping area
-            int overlapX = (int)Math.Max(0, Math.Min(obj1.location.X + obj1.width, obj2.location.X + obj2.width) - Math.Max(obj1.location.X, obj2.location.X));
-            int overlapY = (int)Math.Max(0, Math.Min(obj1.location.Y + obj1.height, obj2.location.Y + obj2.height) - Math.Max(obj1.location.Y, obj2.location.Y));
+            int overlapX = (int)Math.Max(0, Math.Min(shape1.location.X + shape1.height, shape2.location.X + shape2.width) - Math.Max(shape1.location.X, shape2.location.X));
+            int overlapY = (int)Math.Max(0, Math.Min(shape1.location.Y + shape1.height, shape2.location.Y + shape2.height) - Math.Max(shape1.location.Y, shape2.location.Y));
 
             int overlapArea = overlapX * overlapY;
 
-            // Calculate rectangle's total area
-            int totalArea = obj1.width * obj1.height;
+            // Calculate the first shape's total area
+            int totalArea = shape1.width * shape1.height;
 
-            // Check if more than half of the rectangle's area is within the freezer
+            // Check if more than half of the first shape's area is within the second shape
             if (overlapArea > totalArea / 2)
             {
                 return true;
@@ -199,7 +199,7 @@ namespace GraphicalUIDemo
             }
         }
 
-        public bool checkCrusherCollision(Rectangle obj1, Rectangle obj2)
+        public bool checkCrusherCollision(Shape obj1, Shape obj2)
         {
             
             //Calculate the center coordinate of 2 object boxes
@@ -260,6 +260,14 @@ namespace GraphicalUIDemo
                     rectangle.velocity.Y = 0;
                     rectangle.velocity.X = 4;
                 }
+
+                // Check collision with freezer
+                else if (checkFreezerCollision(rectangle, freezer))
+                {
+                    // Mark the rectangle as frozen
+                    freezer.Freeze(rectangle);
+                }
+
                 // Check collision with running belt2
                 else if (checkCollision(rectangle, runningBelt2))
                 {
@@ -277,12 +285,6 @@ namespace GraphicalUIDemo
                     }
                 }
 
-                // Check collision with freezer
-                else if (checkFreezerCollision(rectangle, freezer))
-                {
-                    // Mark the rectangle as frozen
-                    rectangle.IsFrozen = true;
-                }
                 else
                 {
                     // Check if the rectangle touches the bottom line or not? If not, move downward. If yes, remove it

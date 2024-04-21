@@ -79,9 +79,7 @@ namespace GraphicalUIDemo
                 // Draw an aqua square around the rectangle if it's frozen
                 if (rectangle.IsFrozen)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.Aqua),
-                        rectangle.location.X - 5, rectangle.location.Y - 5,
-                        rectangle.width + 10, rectangle.height + 10);
+                    rectangle.drawFreeze(e.Graphics, rectangle);
                 }
 
                 rectangle.draw(e.Graphics);

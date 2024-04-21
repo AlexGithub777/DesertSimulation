@@ -10,7 +10,7 @@ namespace GraphicalUIDemo
 {
     class Rectangle : Shape
     {
-        internal bool IsFrozen;
+        
 
         //Specfic propeties for Rectangle - NO
 

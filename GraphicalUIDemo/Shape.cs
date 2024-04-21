@@ -19,6 +19,8 @@ namespace GraphicalUIDemo
         public SolidBrush color;
         public Vector2 velocity = new Vector2(0,0);
 
+        public bool IsFrozen;
+
         // Constructors
         public Shape(Vector2 location, int width, int height, SolidBrush color)
         {
@@ -28,10 +30,17 @@ namespace GraphicalUIDemo
             this.color = color;
             Random rand = new Random();
             velocity = new Vector2(rand.Next(4) + 1, rand.Next(5));
+            
 
         }
 
         // Methods
+        public void drawFreeze(Graphics canvas, Shape shape)
+        {
+            canvas.FillRectangle(new SolidBrush(Color.Aqua),
+                        shape.location.X - 5, shape.location.Y - 5,
+                        shape.width + 10, shape.height + 10);
+        }
         virtual public void draw(Graphics canvas)
         {
 
